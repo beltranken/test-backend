@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
-const Access = require('./access');
-
-const { generateCommonHook } = require('../helper/db');
+const hashPassword = require('../helper/hashPassword');
 
 const userSchema = mongoose.Schema({
     username: {
@@ -25,16 +22,16 @@ const userSchema = mongoose.Schema({
         type: String
     },
     accesses: [{
-        type: mongoose.ObjectId,
+        type: mongoose.SchemaTypes.ObjectId,
         ref: 'access'
     }],
     company: {
-        type: mongoose.ObjectId,
+        type: mongoose.SchemaTypes.ObjectId,
         ref: 'company',
         required: true
     },
     employee: {
-        type: mongoose.ObjectId,
+        type: mongoose.SchemaTypes.ObjectId,
         ref: 'employee'
     },
     refreshTokens: {
@@ -57,11 +54,29 @@ const userSchema = mongoose.Schema({
     }
 }, { timestamps: true });
 
-userSchema.plugin(uniqueValidator, { type: 'unique', message: '{PATH} must be unique', path: '{PATH}' });
 userSchema.index({ username: 1, company: 1 }, { unique: true });
+const update = function(next) {
+    const update = { ...this.getUpdate() };
 
-const insertModule = generateCommonHook('accesses', 'users', Access);
-userSchema.post('save', insertModule);
-userSchema.post('update', insertModule);
+    if (update?.password) {
+        update.password = hashPassword(update.password);
+        this.setUpdate(update);
+    }
 
-module.exports = mongoose.model('user', userSchema);
+    next();
+};
+
+userSchema.pre('updateOne', update);
+userSchema.pre('findOneAndUpdate', update);
+userSchema.pre('save', function(next) {
+    if (this.password) {
+        this.password = hashPassword(this.password);
+    }
+
+    next();
+});
+
+module.exports = {
+    schema: userSchema,
+    refs: [['accesses', 'users', 'access']]
+};

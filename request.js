@@ -1,30 +1,31 @@
-module.exports = (async function(port) {
+module.exports = (async (port) => {
     const express = require('express');
-    const addRequestId = require('express-request-id');
 
     const app = express();
 
-    const rootPath = '/api/';
-
-    //Import Routes
-    const prepare = require('./middleware/prepare');
-    const auth = require('./routes/auth');
-    const user = require('./routes/user');
-    const access = require('./routes/access');
-    const company = require('./routes/company');
-    const module = require('./routes/module');
-
     //Middleware
     app.use(express.json());
-    app.use(addRequestId());
-    app.use(rootPath, prepare);
+    app.use('', (req, res, next) => {
+        console.log('start:', Date.now());
+        console.group();
+        next();
 
-    //Routes
-    app.use(`${rootPath}auth`, auth);
-    app.use(`${rootPath}user`, user);
-    app.use(`${rootPath}access`, access);
-    app.use(`${rootPath}company`, company);
-    app.use(`${rootPath}module`, module);
+        res.on('finish', () => {
+            console.groupEnd();
+            console.log('end:', Date.now(), '\n\n');
+        });
+    }); 
+
+    const { compileModels, loadDynamicRoutes } = require('./loader');
+    compileModels();
+    app.use('/api', await loadDynamicRoutes());
+
+    //ErrorHandler
+    app.use(require('./error/errorHandler'));
+    app.use('', (req, res) => {
+        console.log('Everything must end');
+        res.status(404).json({message: 'Page not found'});
+    }); 
 
     await app.listen(port);
 });

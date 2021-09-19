@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { rxObjectId } = require('../constant');
 
-const insert = Joi.object({
+const add = Joi.object({
     username: Joi
         .string()
         .alphanum()
@@ -29,7 +29,7 @@ const insert = Joi.object({
         .optional()
 });
 
-const update = Joi.object({
+const edit = Joi.object({
     username: Joi
         .string()
         .alphanum()
@@ -64,18 +64,11 @@ const requestChangePassword = Joi.object({
         .required()
 });
 
-const changePassword = Joi.object({
-    password: Joi
-        .string()
-        .min(4)
-        .max(30)
-        .required()
-});
-
+const changePassword = Joi.string().min(4).max(30).required();
 
 module.exports = {
-    insert,
-    update,
+    add,
+    edit,
     requestChangePassword,
     changePassword
 };

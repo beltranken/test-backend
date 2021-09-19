@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { rxObjectId } = require('../constant');
 
-const insert = Joi.object({
+const add = Joi.object({
     code: Joi
         .string()
         .alphanum()
@@ -19,7 +19,7 @@ const insert = Joi.object({
         )
 });
 
-const update = Joi.object({
+const edit = Joi.object({
     code: Joi
         .string()
         .alphanum()
@@ -38,11 +38,7 @@ const update = Joi.object({
         .optional()
 }).min(1);
 
-const schema = Joi
-    .when(Joi.ref('$isNew'), {
-        'is': true,
-        'then': insert,
-        'otherwise': update
-    });
-
-module.exports = schema;
+module.exports = {
+    add,
+    edit
+};

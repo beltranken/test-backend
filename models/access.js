@@ -1,8 +1,4 @@
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
-const User = require('./user');
-
-const { generateCommonHook } = require('../helper/db');
 
 const accessSchema = mongoose.Schema({
     name: {
@@ -10,12 +6,12 @@ const accessSchema = mongoose.Schema({
         required: true
     },
     company: {
-        type: mongoose.ObjectId,
+        type: mongoose.SchemaTypes.ObjectId,
         ref: 'company',
         required: true
     },
     description: { type: String },
-    users: [{ type: mongoose.ObjectId }],
+    users: [{ type: mongoose.SchemaTypes.ObjectId }],
     details: [
         {
             action: { 
@@ -23,7 +19,7 @@ const accessSchema = mongoose.Schema({
                 required: true 
             },
             module: {
-                type: mongoose.ObjectId,
+                type: mongoose.SchemaTypes.ObjectId,
                 ref: 'module',
                 required: true
             }
@@ -33,10 +29,8 @@ const accessSchema = mongoose.Schema({
 
 accessSchema.index({ 'company': 1, 'name': 1 }, { unique: true });
 accessSchema.index({ '_id': 1, 'details.action': 1, 'details.module': 1 }, { unique: true, sparse: true });
-accessSchema.plugin(uniqueValidator, { type: 'unique', message: '{PATH} must be unique', path: '{PATH}' });
 
-const insertModule = generateCommonHook('users', 'accesses', User);
-accessSchema.post('save', insertModule);
-accessSchema.post('update', insertModule);
-
-module.exports = mongoose.model('access', accessSchema);
+module.exports = {
+    schema: accessSchema,
+    refs: [['users', 'accesses', 'user']]
+};

@@ -1,10 +1,10 @@
-( async function () {
+( async () => {
     'use strict';
     
     const request = require('./request');
     const { connect } = require('./db');
-    const dotenv = require('dotenv');
 
+    const dotenv = require('dotenv');
     dotenv.config();
 
     console.log(Date.now(), 'The app is starting');
@@ -20,4 +20,9 @@
     
     console.log(Date.now(), 'The app is now running');
 
-})().then().catch(e => console.log(e));
+})()
+    .then()
+    .catch(e => {
+        console.log(e);
+        process.exit(1);
+    });

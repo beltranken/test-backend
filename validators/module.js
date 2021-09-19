@@ -1,13 +1,17 @@
 const Joi = require('joi');
 const { rxObjectId } = require('../constant');
 
-const insert = Joi.object({
+const add = Joi.object({
     code: Joi
         .string()
         .alphanum()
         .max(50)
         .required(),
     name: Joi
+        .string()
+        .max(50)
+        .required(),
+    type: Joi
         .string()
         .max(50)
         .required(),
@@ -24,13 +28,17 @@ const insert = Joi.object({
         .optional()
 });
 
-const update = Joi.object({
+const edit = Joi.object({
     code: Joi
         .string()
         .alphanum()
         .max(50)
         .optional(),
     name: Joi
+        .string()
+        .max(50)
+        .optional(),
+    type: Joi
         .string()
         .max(50)
         .optional(),
@@ -47,11 +55,7 @@ const update = Joi.object({
         .optional()
 }).min(1);
 
-const schema = Joi
-    .when(Joi.ref('$isNew'), {
-        'is': true,
-        'then': insert,
-        'otherwise': update
-    });
-
-module.exports = schema;
+module.exports = {
+    add,
+    edit
+};

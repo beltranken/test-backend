@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { rxObjectId } = require('../constant');
 
-const insert = Joi.object({
+const add = Joi.object({
     name: Joi
         .string()
         .max(50)
@@ -35,7 +35,7 @@ const insert = Joi.object({
         .optional()    
 });
 
-const update = Joi.object({
+const edit = Joi.object({
     name: Joi
         .string()
         .max(50)
@@ -71,6 +71,6 @@ const update = Joi.object({
 }).min(1);
 
 module.exports = {
-    insert,
-    update
+    add,
+    edit
 };
