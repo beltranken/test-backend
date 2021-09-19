@@ -51,7 +51,6 @@ class UserController {
             const authData = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
             userId = authData.userId;
         } catch(e) {
-            console.log(e);
             next(ApiError.unprocessable('Invalid token'));
             return;
         }
