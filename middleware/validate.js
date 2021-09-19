@@ -1,11 +1,12 @@
 const Validators = require('../validators'); 
 const ApiError = require('../error/ApiError');
+const getErrorMsg = require('../helper/getErrorMsg');
 
 module.exports = function(req, res, next) {
     const { module: { code }, action, user } = res.locals;
     
     if (!action) {
-        next(ApiError.internal('Module must be initialize before calling validate'));
+        next(ApiError.internal('Action must be initialize before calling validate'));
         return;
     }
 
@@ -22,7 +23,7 @@ module.exports = function(req, res, next) {
 
     const { value, error } = validator.validate(req.body);
     if (error) {
-        next(ApiError.unprocessable(error.details?.map(d => d?.message)));
+        next(ApiError.unprocessable(getErrorMsg(error)));
         return;
     }
     

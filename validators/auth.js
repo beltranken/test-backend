@@ -8,6 +8,12 @@ const schema = Joi.object({
         .min(4)
         .max(30)
         .required(),
+    password: Joi
+        .string()
+        .required(),
+    device: Joi
+        .string()
+        .required(),
     company: Joi
         .string()
         .pattern(rxObjectId)

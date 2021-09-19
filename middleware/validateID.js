@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const { rxObjectId } = require('../constant');
 const ApiError = require('../error/ApiError');
+const getErrorMsg = require('../helper/getErrorMsg');
 
 module.exports = function(req, _, next) {
     const { id } = req.params;
@@ -11,7 +12,7 @@ module.exports = function(req, _, next) {
 
     const { error } = Joi.string().pattern(rxObjectId).validate(id);
     if (error) {
-        next(ApiError.unprocessable(error.details?.map(d => d?.message)));
+        next(ApiError.unprocessable(getErrorMsg(error)));
         return;
     }
 

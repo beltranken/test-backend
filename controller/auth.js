@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const ApiError = require('../error/ApiError');
 const AuthValidator = require('../validators/auth');
+const getErrorMsg = require('../helper/getErrorMsg');
 
 const expiresIn = 24 * 60 * 60000;
 
@@ -23,10 +24,14 @@ class AuthController {
             next(ApiError.unprocessable('User doesn\'t exists'));
             return;
         }
-    
+
         const i = user.refreshTokens.findIndex(e => e.token === refreshToken);
-        await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET + user.password + user.refreshTokens[i].device);
-            
+        try {
+            await jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET + user.password + user.refreshTokens[i].device);
+        } catch(e) {
+            next(ApiError.unprocessable('Invalid token'));
+        }
+
         const accessToken = generateAccessToken({ userId: user._id, device:  user.refreshTokens[i].device});
         user.refreshTokens[i].lastUsed = Date.now();
         await user.save();
@@ -37,10 +42,11 @@ class AuthController {
     async login(req, res, next) {
         const User = mongoose.model('user');
 
-        const { username, password, device } = req.body;
-        const company = req.body?.company;
-
-        AuthValidator.login.validate({username, company});
+        const { error, value: { username, password, device, company } } = AuthValidator.login.validate(req.body);
+        if (error) {
+            next(ApiError.unprocessable(getErrorMsg(error)));
+            return;
+        }
 
         const user = await User.findOne({ username: username, company: company }).select('+password +refreshTokens');
         if (!user) {
@@ -54,6 +60,7 @@ class AuthController {
             return;
         }
 
+        //TODO: validate device format
         const payload = { userId: user._id, device: device };
         const accessToken = generateAccessToken(payload);
         

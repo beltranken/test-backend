@@ -1,3 +1,3 @@
 module.exports = function(error) {
-    ValidatorError
+    return error?.details?.map(d => d?.message) || [];
 };

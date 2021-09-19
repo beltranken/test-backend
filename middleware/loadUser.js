@@ -25,6 +25,7 @@ module.exports = async function(req, res, next) {
         return;
     }
 
+    user.refreshTokens = undefined;
     res.locals.user = user;
     
     console.log('company:', { _id: user?.company?._id, name: user?.company?.name });

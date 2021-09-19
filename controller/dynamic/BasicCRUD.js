@@ -13,7 +13,7 @@ class BasicCRUD extends CRUD {
          *      - validate @sort and @limit 
          *      - create token for version number? 
          */
-        const { query, page: {skip, limit} } = res.locals;
+        const { query, page: { skip, limit } } = res.locals;
         const data = await this.Model.find(query).skip(skip).limit(limit);
         const count = await this.Model.countDocuments(query);
 
