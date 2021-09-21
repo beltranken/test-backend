@@ -7,7 +7,7 @@ module.exports = function (err, req, res, _) {
         return;
     }
 
-    //TODO: Send notification to admin
+    //TODO: uncaught error, Send email notification to admin
 
-    res.status(500).json('something went wrong');
+    res.status(500).json({ message: 'something went wrong' });
 };

@@ -1,9 +1,16 @@
 
 const rxObjectId = new RegExp('^[0-9a-fA-F]{24}$');
 
+const fileUploadPath = 'uploads';
+
 const ModuleTypes = {
     Basic: 'basic',
-    Report: 'report'
+    Report: 'report',
+    Custom: 'custom'
+};
+
+const ModuleGroup = {
+    Admin: 'Admin'
 };
 
 const DynamicModule = {
@@ -30,5 +37,7 @@ module.exports = {
     ModuleTypes,
     Action,
     ActionRank,
-    DynamicModule
+    DynamicModule,
+    ModuleGroup,
+    fileUploadPath
 };

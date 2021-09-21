@@ -23,8 +23,10 @@ module.exports = (async (port) => {
     //ErrorHandler
     app.use(require('./error/errorHandler'));
     app.use('', (req, res) => {
-        console.log('Everything must end');
-        res.status(404).json({message: 'Page not found'});
+        res.status(404).json({
+            message: 'Page not found',
+            time: Date.now()
+        });
     }); 
 
     await app.listen(port);
