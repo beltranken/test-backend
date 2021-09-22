@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js",
+    "start": "node server NODE_ENV=production ACCESS_TOKEN_SECRET=a96253cc39dc8a61d7e57a81745f05d1bd3a9a4d18cfc7aba716a14ab1121a381a81974e3261accc5a62430e839e34460c3cefc5c89f3de3356e2ac1322e44e1 REFRESH_TOKEN_SECRET=c81980697fac9d0e01dd26077d7325427bb3a6d4e325496a58b781180d31c2f6bc8aaf0e1fda0738fd331fb0ab920a67f773ea91ef66784fe5260abf102bf7e8 DB_CONNECTION=mongodb://localhost:27017/test FILE_BASE_PATH=./test/images/",
+    "start-dev": "nodemon index.js",
     "lint": "eslint --fix --ext .js,.jsx ."
   },
   "keywords": [],
