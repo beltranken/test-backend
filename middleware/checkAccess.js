@@ -8,7 +8,6 @@ module.exports = function(paramActions) {
         const { user, module } = res.locals;
 
         if (!actions) {
-            console.log(actions);
             next(ApiError.internal('Action must be a string or array of string'));
             return;
         }

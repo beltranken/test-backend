@@ -7,63 +7,60 @@
 
     require('../db').connect();
     const models = require('../loader/compileModels')();
+    const option = {upsert: true, new: true};
 
-    const rootCompany = new models.company({
+    const rootCompany = await models.company.findOneAndUpdate({code: 'root'},{
         code: 'root',
         name: 'ROOT',
         isSuper: true,
         modules: [],
         users: []
-    });
+    }, option);
 
     const salt = bcrypt.genSaltSync();
     const password = bcrypt.hashSync('root', salt);
-    const rootCompanyId = (await rootCompany.save())._id;
-    const rootUser = new models.user({
+    
+    await models.user.updateOne({username: 'root', company: rootCompany._id}, {
         username: 'root',
         password: password,
         isSuper: true,
-        company: rootCompanyId,
+        company: rootCompany._id,
         email: 'beltrankenhenson@gmail.com'
-    });
-    await rootUser.save();
+    }, option);
+
 
     const modules = [];
-    modules.push(new models.module({
+    modules.push(models.module.updateOne({code: 'user'}, {
         code: 'user',
         name: 'User Management',
         type: ModuleTypes.Basic,
         group: ModuleGroup.Admin
-    }));
-    modules.push(new models.module({
+    }, option));
+    modules.push(models.module.updateOne({code: 'auth'}, {
         code: 'auth',
         name: 'Authentication Management',
         type: ModuleTypes.Custom,
         group: ModuleGroup.Admin
-    }));
-    modules.push(new models.module({
+    }, option));
+    modules.push(models.module.updateOne({code: 'module'}, {
         code: 'module',
         name: 'Module Management',
         type: ModuleTypes.Basic,
         group: ModuleGroup.Admin
-    }));
-    modules.push(new models.module({
+    }, option));
+    modules.push(models.module.updateOne({code: 'access'}, {
         code: 'access',
         name: 'Access Management',
         type: ModuleTypes.Basic,
         group: ModuleGroup.Admin
-    }));
-
-    const promises = [];
-    for(let module of modules) {
-        promises.push(module.save());
-    }
-    await Promise.all(promises);
+    }, option));
+    
+    await Promise.all(modules);
 })()
     .then(_ => {
         process.exit(0);
     })
     .catch(e => {
-        console.log(e);
+        console.error(e);
         process.exit(1);
     });

@@ -1,20 +1,14 @@
 module.exports = (async (port) => {
     const express = require('express');
+    const cors = require('cors');
+    const morgan = require('morgan');
 
     const app = express();
 
     //Middleware
+    app.use(cors());
     app.use(express.json());
-    app.use('', (req, res, next) => {
-        console.log('start:', Date.now());
-        console.group();
-        next();
-
-        res.on('finish', () => {
-            console.groupEnd();
-            console.log('end:', Date.now(), '\n\n');
-        });
-    }); 
+    app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 
     const { compileModels, loadDynamicRoutes } = require('./loader');
     compileModels();
